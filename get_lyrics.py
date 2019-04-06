@@ -1,7 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
 from time import sleep
-
+import json
+import os
 
 def strp_text(text):
     text = text.strip()
@@ -36,14 +37,35 @@ def get_hot_country_by_year(year):
     return song_ls
 
 
+def write_json(yr, data):
+    # write to file
+    directory = 'yearly_info'
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    os.chdir(directory)
 
-all_yr = []
-year_list = [2010,2011,2012]
-for year in year_list:
-    print('getting year %s ' % str(year))
-    dicts = {}
-    info = get_hot_country_by_year(year)
-    dicts['year'] = year
-    dicts['info'] = info
-    all_yr.append(dicts)
-    sleep(3)
+    f_name = 'country_' + str(yr)
+    f_name = f_name +'.json'
+    with open(f_name, 'w') as outfile:
+        json.dump(data, outfile)
+
+    os.chdir("..") # go back
+
+
+
+def main():
+    year_list = [2005,2006,2007,2008]
+    for year in year_list:
+        print('getting year %s ' % str(year))
+        dicts = {}
+        info = get_hot_country_by_year(year)
+        dicts['year'] = year
+        dicts['info'] = info
+
+        write_json(yr= year, data = dicts)
+        sleep(5)
+
+
+
+if __name__ == main():
+    main()
